@@ -1,5 +1,6 @@
 ;;; isgd.el --- Shorten URLs using the isgd.com shortener service
 
+
 ;; Copyright (C) 2013  Chmouel Boudjnah <chmouel@chmouel.com>
 
 ;; Version: 20130927
@@ -32,6 +33,7 @@
 ;; with a shortened version.
 
 ;;; Code:
+(require 'thingatpt)
 
 ;; User variables
 (defvar isgd-base-url "http://is.gd/api.php")
