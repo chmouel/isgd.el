@@ -34,22 +34,22 @@
 
 ;;; Code:
 (require 'thingatpt)
+(require 'url-util)
 
 ;; User variables
 (defvar isgd-base-url "http://is.gd/api.php")
 
 ;; Functions
 (defun isgd-shorten (long-url)
-  (let ((buf
-          (url-retrieve-synchronously
-           (format "%s?longurl=%s" isgd-base-url long-url))))
+  (let ((buf (url-retrieve-synchronously
+              (format "%s?longurl=%s"
+                      isgd-base-url (url-hexify-string long-url)))))
     (with-current-buffer buf
-           (goto-char (point-min))
-           (search-forward "\n\n" nil t)
-           (let ((beg (point)))
-             (end-of-line)
-             (filter-buffer-substring beg (point))))
-         ))
+      (goto-char (point-min))
+      (search-forward "\n\n" nil t)
+      (let ((beg (point)))
+        (end-of-line)
+        (filter-buffer-substring beg (point))))))
 
 ;;;###autoload
 (defun isgd-at-point ()
