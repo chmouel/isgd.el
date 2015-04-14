@@ -1,10 +1,9 @@
 ;;; isgd.el --- Shorten URLs using the isgd.com shortener service
 
 
-;; Copyright (C) 2013  Chmouel Boudjnah <chmouel@chmouel.com>
+;; Copyright (C) 2015  Chmouel Boudjnah <chmouel@chmouel.com>
 
-;; Version: 20130927
-;; X-Original-Version: 1.0
+;; Version: 20150414
 ;; Author: Chmouel Boudjnah <chmouel@chmouel.com>
 ;; URL: https://github.com/chmouel/isgd.el
 
@@ -62,14 +61,15 @@ With an active region, use the region contents as an URL."
                           (region-end))
                   (thing-at-point-bounds-of-url-at-point)))
         url)
-    (when (not bounds)
-      (error "No URL at point"))
-    (setq url (isgd-shorten (buffer-substring-no-properties (car bounds)
-                                                             (cdr bounds))))
-    (save-excursion
-      (delete-region (car bounds) (cdr bounds))
-      (goto-char (car bounds))
-      (insert url))))
+    (if (not bounds)
+        (error "No URL at point")
+      (save-excursion
+        (delete-region (car bounds) (cdr bounds))
+        (goto-char (car bounds))
+        (insert
+         (isgd-shorten
+          (buffer-substring-no-properties (car bounds)
+                                          (cdr bounds))))))))
 
 ;;; End isgd.el ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
