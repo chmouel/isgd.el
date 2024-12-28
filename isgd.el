@@ -1,7 +1,7 @@
 ;;; isgd.el --- Shorten URLs using the isgd.com shortener service
 
 
-;; Copyright (C) 2015  Chmouel Boudjnah <chmouel@chmouel.com>
+;; Copyright (C) 2015-2024  Chmouel Boudjnah <chmouel@chmouel.com>
 
 ;; Version: 0.2
 ;; Author: Chmouel Boudjnah <chmouel@chmouel.com>
