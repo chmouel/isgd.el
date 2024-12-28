@@ -1,5 +1,4 @@
-;;; isgd.el --- Shorten URLs using the isgd.com shortener service
-
+;;; isgd.el --- Shorten URLs using the isgd.com shortener service -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2015-2024  Chmouel Boudjnah <chmouel@chmouel.com>
 
@@ -41,12 +40,13 @@
 
 ;; Functions
 (defun isgd-shorten (long-url)
+  "Shorten LONG-URL using the is.gd service."
   (with-current-buffer (url-retrieve-synchronously
                         (format "%s?longurl=%s"
                                 isgd-base-url (url-hexify-string long-url)))
     (goto-char (point-min))
     (re-search-forward "\n\n")
-    (buffer-substring-no-properties (point) (point-at-eol))))
+    (buffer-substring-no-properties (point) (line-end-position))))
 
 (defun isgd--shorten-url-at-point ()
   "Return the shortened URL at point or in the region."
