@@ -3,7 +3,7 @@
 
 ;; Copyright (C) 2015  Chmouel Boudjnah <chmouel@chmouel.com>
 
-;; Version: 20150414
+;; Version: 0.2
 ;; Author: Chmouel Boudjnah <chmouel@chmouel.com>
 ;; URL: https://github.com/chmouel/isgd.el
 
