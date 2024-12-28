@@ -25,52 +25,62 @@
 ;; Simple mode to shorten URLs from Emacs.
 
 ;; Adapted from bitly.el from Jorgen Schaefer <forcer@forcix.cx>
-;; available here https://github.com/jorgenschaefer/bitly-el
+;; available here https://github.com/forcix/bitly.el
 
 ;; Use (isgd-shorten URL) from an Emacs Lisp program, or
-;; M-x isgd-url-at-point to replace the URL at point (or the region)
-;; with a shortened version.
+;; M-x isgd-copy-url-at-point to copy the shortened URL at point (or the region)
+;; to the kill ring, or M-x isgd-replace-url-at-point to replace the URL at point
+;; (or the region) with a shortened version.
 
 ;;; Code:
 (require 'thingatpt)
 (require 'url-util)
 
 ;; User variables
-(defvar isgd-base-url "http://is.gd/api.php")
+(defvar isgd-base-url "https://is.gd/api.php")
 
 ;; Functions
 (defun isgd-shorten (long-url)
-  (let ((buf (url-retrieve-synchronously
-              (format "%s?longurl=%s"
-                      isgd-base-url (url-hexify-string long-url)))))
-    (with-current-buffer buf
-      (goto-char (point-min))
-      (search-forward "\n\n" nil t)
-      (let ((beg (point)))
-        (end-of-line)
-        (filter-buffer-substring beg (point))))))
+  (with-current-buffer (url-retrieve-synchronously
+                        (format "%s?longurl=%s"
+                                isgd-base-url (url-hexify-string long-url)))
+    (goto-char (point-min))
+    (re-search-forward "\n\n")
+    (buffer-substring-no-properties (point) (point-at-eol))))
+
+(defun isgd--shorten-url-at-point ()
+  "Return the shortened URL at point or in the region."
+  (let* ((url (if (use-region-p)
+                  (buffer-substring-no-properties (region-beginning) (region-end))
+                (thing-at-point 'url)))
+         (shorten (and url (string-match-p "\\`https?://" url) (isgd-shorten url))))
+    (unless url
+      (error "No URL at point"))
+    (if (string= shorten url)
+        (message "URL is already shortened")
+      shorten)))
 
 ;;;###autoload
-(defun isgd-at-point ()
-  "Replace the URL at point with a shortened one.
-
-With an active region, use the region contents as an URL."
+(defun isgd-copy-url-at-point()
+  "Shorten the URL at point and copy it to the kill ring."
   (interactive)
-  (let ((bounds (if (use-region-p)
-                    (cons (region-beginning)
-                          (region-end))
-                  (thing-at-point-bounds-of-url-at-point)))
-        url)
-    (if (not bounds)
-        (error "No URL at point")
-      (save-excursion
-        (delete-region (car bounds) (cdr bounds))
-        (goto-char (car bounds))
-        (insert
-         (isgd-shorten
-          (buffer-substring-no-properties (car bounds)
-                                          (cdr bounds))))))))
+  (let ((shorten (isgd--shorten-url-at-point)))
+    (when shorten
+      (kill-new shorten)
+      (message "Shortened URL: %s" shorten))))
 
+;;;###autoload
+(defun isgd-replace-url-at-point()
+  "Shorten the URL at point and replace it."
+  (interactive)
+  (let ((shorten (isgd--shorten-url-at-point)))
+    (when shorten
+      (if (use-region-p)
+          (delete-region (region-beginning) (region-end))
+        (let ((bounds (bounds-of-thing-at-point 'url)))
+          (delete-region (car bounds) (cdr bounds))))
+      (insert shorten)
+      (message "Shortened URL: %s" shorten))))
 ;;; End isgd.el ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'isgd)
