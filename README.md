@@ -23,9 +23,9 @@ to the kill ring, or `M-x isgd-replace-url-at-point` to replace the URL at point
 
 ## Customization
 
-- `isgd-base-url' is the base URL for the is.gd shortening service API.
-- `isgd-logstats' enables detailed logging of statistics for shortened URLs.
-- `isgd-ask-custom-url' asks for a custom short URL when shortening URLs.
+- `isgd-base-url` is the base URL for the is.gd shortening service API.
+- `isgd-logstats` enables detailed logging of statistics for shortened URLs.
+- `isgd-ask-custom-url` asks for a custom short URL when shortening URLs.
 
 ## License
 
